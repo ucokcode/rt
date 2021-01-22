@@ -6,8 +6,8 @@ use std::thread;
 use crossbeam::channel::{bounded, unbounded, Receiver, Sender};
 use task::Task;
 
-pub(crate) static GLOBAL: Lazy<(Sender<Task>, Receiver<Task>)> = Lazy::new(|| unbounded());
-pub(crate) static WAIT: Lazy<(Sender<()>, Receiver<()>)> = Lazy::new(|| unbounded());
+static GLOBAL: Lazy<(Sender<Task>, Receiver<Task>)> = Lazy::new(|| unbounded());
+static WAIT: Lazy<(Sender<()>, Receiver<()>)> = Lazy::new(|| unbounded());
 
 pub mod prelude {
     pub use super::Plugin;
@@ -130,10 +130,11 @@ mod tests {
     #[test]
     fn io() {
         run();
+        let main = thread::current().id();
         let mut x = 2;
-        (|| x += 1).io();
-        (|| x += 1).io();
-        (|| x += 1).io();
+        for _ in 0..3 {
+            (|| { x += 1; assert_ne!(thread::current().id(), main); }) .io();
+        }
         wait();
         assert_eq!(x, 5);
     }
