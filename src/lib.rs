@@ -93,3 +93,37 @@ where
         _no_context(self);
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn once() {
+        run();
+        let x = (|| 2).f();
+        assert_eq!(x.wait(), 2);
+    }
+
+    #[test]
+    fn wait_of_wait() {
+        run();
+        let x = (|| 2).f();
+        let y = (move || x.wait() * 2).f();
+        assert_eq!(y.wait(), 4);
+    }
+
+    #[test]
+    fn vec_task() {
+        run();
+        let x = (|| {
+            let mut vec = Vec::new();
+            for _ in 0..1_000_000 {
+                let c = || 1 * 2;
+                vec.push(c.f());
+            }
+            vec.iter().map(|x| x.wait()).sum::<i32>()
+        })
+        .f();
+        assert_eq!(x.wait(), 2_000_000);
+    }
+}
