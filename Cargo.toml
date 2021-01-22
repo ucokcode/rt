@@ -1,0 +1,13 @@
+[package]
+name = "rt"
+version = "0.1.0"
+authors = ["ucokcode <ucokcode00@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+crossbeam = "0.8.0"
+num_cpus = "1.13.0"
+once_cell = "1.5.2"
+parking_lot = "0.11.1"
