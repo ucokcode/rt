@@ -126,4 +126,15 @@ mod tests {
         .f();
         assert_eq!(x.wait(), 2_000_000);
     }
+
+    #[test]
+    fn io() {
+        run();
+        let mut x = 2;
+        (|| x += 1).io();
+        (|| x += 1).io();
+        (|| x += 1).io();
+        wait();
+        assert_eq!(x, 5);
+    }
 }
